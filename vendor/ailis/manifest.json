@@ -1,0 +1,26 @@
+{
+  "source": "F:\\AILIS\\MAIN",
+  "repository": "https://github.com/haowenGuo/AILIS.git",
+  "commit": "92f73b8f9597f36066d8c0725d35f876546b1224",
+  "branch": "main",
+  "snapshotTime": "2026-09-21T03:53:22.711Z",
+  "selectedFilesDirty": "",
+  "files": [
+    {
+      "source": "electron/ailis-memory-store.cjs",
+      "target": "ailis-memory-store.cjs",
+      "sha256": "6d98e37290bd35ff4e901689ab3413de6e9824f6d8a7afa63f508cc3f6aef405"
+    },
+    {
+      "source": "electron/ailis-memory-lexical-retriever.cjs",
+      "target": "ailis-memory-lexical-retriever.cjs",
+      "sha256": "8e2a3b8150d6a0bd0f8e3ef1cfdfd4817ac9737050bdedacfea3af8586657969"
+    },
+    {
+      "source": "LICENSE",
+      "target": "LICENSE",
+      "sha256": "c3b77bef641e8db356a391436a453f7a53ea10e7db1f31b982a04ab840f4f079"
+    }
+  ],
+  "note": "Exact working-tree copies. Only the two memory modules are executed; desktop state, secrets and other modules are not imported."
+}

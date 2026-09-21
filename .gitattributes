@@ -1,0 +1,3 @@
+* text=auto eol=lf
+# Preserve the exact upstream bytes recorded in the provenance manifest.
+vendor/ailis/* -text whitespace=cr-at-eol

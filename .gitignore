@@ -1,0 +1,13 @@
+.state/
+.env
+.env.*
+!.env.example
+submission/private/
+data/
+results/*/state/
+results/*/details.json
+node_modules/
+CODEX_MEMORY.md
+.deploy/
+submission/
+.codex-memory/

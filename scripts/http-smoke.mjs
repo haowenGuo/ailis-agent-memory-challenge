@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+const base = (process.env.AML_PUBLIC_BASE || 'http://127.0.0.1:8787').replace(/\/$/, '');
+const key = process.env.AML_MEMORY_KEY;
+if (!key) throw new Error('AML_MEMORY_KEY required');
+const scope = `operator-smoke-${randomUUID()}`;
+const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` };
+const request = async (endpoint, body, credentials = headers) => {
+  const response = await fetch(base + endpoint, { method: 'POST', headers: credentials, body: JSON.stringify(body), signal: AbortSignal.timeout(30000) });
+  return { status: response.status, data: await response.json() };
+};
+assert.equal((await fetch(base + '/health', { signal: AbortSignal.timeout(15000) })).status, 200);
+const body = { user_id: scope, request_id: 'write', session_id: 'first', messages: [{ role: 'user', content: 'The operator moved to Hangzhou and prefers jasmine tea.', timestamp: 0 }, { role: 'assistant', content: 'def quartz_decoder():\n    return 42\n' }] };
+assert.equal((await request('/add', body, { ...headers, Authorization: 'Bearer deliberately-invalid' })).status, 401);
+const first = await request('/add', body);
+assert.deepEqual(first, { status: 200, data: { success: true, request_id: 'write', user_id: scope, session_id: 'first' } });
+assert.deepEqual(await request('/add', body), first);
+const found = await request('/search', { user_id: scope, query: 'quartz_decoder', top_k: 100 });
+assert.equal(found.status, 200);
+assert.equal(found.data.data.length, 1);
+assert.ok(found.data.data[0].content.endsWith(body.messages[1].content));
+const time = await request('/search', { user_id: scope, query: 'jasmine', top_k: 100 });
+assert.equal(time.data.data[0].created_at, '1970-01-01T00:00:00.000Z');
+assert.deepEqual((await request('/search', { user_id: scope + '-other', query: 'jasmine', top_k: 100 })).data, { data: [] });
+assert.equal((await request('/add', { ...body, messages: [{ role: 'user', content: 'different body' }] })).status, 409);
+assert.equal((await request('/search', { user_id: scope, query: 'jasmine', top_k: 101 })).status, 422);
+console.log(JSON.stringify({ passed: 9, failed: 0, scope, checks: ['TLS/health', 'authentication', 'Add contract', 'idempotency', 'code evidence', 'source timestamp', 'isolation', 'conflict', 'schema'] }));
